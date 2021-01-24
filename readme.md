@@ -2,7 +2,7 @@
 This is a set of modules with real world data using Intersystems IRIS Multimodel concepts.
 
 
-![picture](https://raw.githubusercontent.com/renatobanzai/iris-multimodel-suite/primary/img/mkt_coins_graph.gif)
+![picture](https://github.com/renatobanzai/iris-multimodel-suite/blob/master/img/mkt_coins_graph.gif)
 
 ## Crypto Coins Market Graph
 The crypto coins market isn't only BTC (Bitcoins), if we take a look at the biggest Crypto Coin Exchange (Binance) we can
