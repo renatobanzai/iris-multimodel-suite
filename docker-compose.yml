@@ -1,0 +1,29 @@
+version: '3.6'
+services:
+  iris-database:
+    build:
+      context: ./iris
+      dockerfile: Dockerfile
+    restart: always
+    hostname: iris-database
+    ports:
+      - 1972:1972
+      - 52773:52773
+
+  iris-multimodel-suite:
+    build:
+      context: ./app
+      dockerfile: Dockerfile
+    hostname: iris-multimodel-suite
+    restart: always
+    depends_on:
+      - iris-database
+    links:
+      - iris-database
+    ports:
+      - 8050:8050
+    volumes:
+      - ./data:/data
+    environment:
+      WAIT_HOSTS: iris-database:1972
+    command: __main__.py
