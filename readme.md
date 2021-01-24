@@ -21,10 +21,6 @@ by the developer.
 
 ![picture](https://raw.githubusercontent.com/renatobanzai/iris-python-covid19/master/img/global_chart.gif)
 
-### Demo
-I have deployed the application as a demo here:
-[http://iris-python-suite.eastus.cloudapp.azure.com/global-chart](http://iris-python-suite.eastus.cloudapp.azure.com/global-chart)
-
 ## Tools
 
 A set of classes in python using the IRIS Native API: 
@@ -121,8 +117,3 @@ Here some articles link to understant better the application:
 - [using-python-represent-globals-network-chart](https://community.intersystems.com/post/using-python-represent-globals-network-chart)
 - [creating-chatbot-iris-and-python](https://community.intersystems.com/post/creating-chatbot-iris-and-python)
 - [help-my-chatbots-learn-language](https://community.intersystems.com/post/help-my-chatbots-learn-language)
-
-
-## If you don't want to run local
-I deployed all the application at Azure, take a look at [http://iris-python-suite.eastus.cloudapp.azure.com/](http://iris-python-suite.eastus.cloudapp.azure.com/)
- 
