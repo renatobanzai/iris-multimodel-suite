@@ -4,9 +4,15 @@ This is a set of modules with real world data using Intersystems IRIS Multimodel
 
 ![picture](https://raw.githubusercontent.com/renatobanzai/iris-multimodel-suite/master/img/mkt_coins_graph.gif)
 
+## Demo
+You can see it working at:
+[http://iris-multimodel-suite.eastus.cloudapp.azure.com/cryptocoins-market](http://iris-multimodel-suite.eastus.cloudapp.azure.com/cryptocoins-market)
+
 ## Crypto Coins Market Graph
 The crypto coins market isn't only BTC (Bitcoins), if we take a look at the biggest Crypto Coin Exchange (Binance) we can
- see plenty ways to trade crypto coins. And how IRIS Multimodel Pattern can help us to do it?
+ see plenty ways to trade crypto coins. And how IRIS Multimodel Pattern can help us to do it? In this particular case this application
+  uses IRIS with 2 datamodels. 1st to ilustrate the link between market crypto coins and altcoins I am using the globals
+
 
 ## Multimodel?
 Almost market developers used to use one technology for each data model concept. With Intersystems Iris you can do it with
@@ -67,14 +73,6 @@ After cloning this repo open a terminal go to the iris-python-covid19 folder and
 git clone https://github.com/renatobanzai/iris-multimodel-suite.git
 ```
 
-### Building and running the docker-compose
-**adjust docker settings to up memory and cpu the AI demands more capacity**
-- 4GB Memory (or more if you can)
-- 2CPU (or more if you can)
-
-### Need to set more memory to docker engine
-![picture](https://raw.githubusercontent.com/renatobanzai/iris-python-covid19/master/img/docker_memory.png)
-
 ### Running in linux and MacOS
 ```
 docker-compose build
@@ -108,12 +106,10 @@ http://localhost:52773
 user: _SYSTEM
 pass: SYS
 ```
- 
 
 ## How does it work?
 This is a python application using the IRIS service to persist and read data. I use globals to store raw data from JHU and plot it using Python community libraries. All code in ./app folder.
 Here some articles link to understant better the application: 
 - [iris-python-suite-hitchhikers-guide-global-1](https://community.intersystems.com/post/iris-python-suite-hitchhikers-guide-global-1)
 - [using-python-represent-globals-network-chart](https://community.intersystems.com/post/using-python-represent-globals-network-chart)
-- [creating-chatbot-iris-and-python](https://community.intersystems.com/post/creating-chatbot-iris-and-python)
-- [help-my-chatbots-learn-language](https://community.intersystems.com/post/help-my-chatbots-learn-language)
+

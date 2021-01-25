@@ -113,6 +113,12 @@ class irisglobalchart():
             self.subscripts_filter = otherargs["subscripts_filter"]
         else:
             self.subscripts_filter = None
+
+        if "hover_dict" in otherargs:
+            self.hover_dict = otherargs["hover_dict"]
+        else:
+            self.hover_dict = {}
+
         self.global_array = global_array
         self.has_value = False
         self.subscripts = {}
@@ -130,6 +136,7 @@ class irisglobalchart():
             return
 
         self.value = self.iris_native.get(*self.global_array)
+        self.hover_dict[self.global_array] = self.value
         if self.value:
             self.has_value = True
         subscripts_iterator = self.iris_native.iterator(*self.global_array)
@@ -140,15 +147,18 @@ class irisglobalchart():
                 self.obj_nx.add_edge(self.global_array, new_global_array)
                 irisglobalchart(*new_global_array,
                                 iris_connection=self.iris_connection,
-                                obj_nx=self.obj_nx)
+                                obj_nx=self.obj_nx,
+                                hover_dict=self.hover_dict)
         else:
             for subscript_name in self.subscripts_filter:
                 new_global_array = self.global_array + (subscript_name,)
                 self.obj_nx.add_edge(self.global_array, new_global_array)
                 irisglobalchart(*new_global_array,
                                 iris_connection=self.iris_connection,
-                                obj_nx=self.obj_nx)
+                                obj_nx=self.obj_nx,
+                                hover_dict=self.hover_dict)
         return
+
 
     def get_fig(self):
         _nx = self.obj_nx
@@ -180,7 +190,7 @@ class irisglobalchart():
             node_x.append(x)
             node_y.append(y)
             node_text.append(node[-1])
-            node_hovertext.append(node)
+            node_hovertext.append(self.hover_dict[node])
 
         qtt = len(node_text)
         size = 50
@@ -216,6 +226,7 @@ class irisglobalchart():
             hovertext=node_hovertext
         )
 
+
         fig = go.Figure(data=[edge_trace, node_trace],
                         layout=go.Layout(
                             title='Global Graph View: ' + ",".join(self.global_array),
@@ -225,14 +236,12 @@ class irisglobalchart():
                             annotations=[dict(
                                 showarrow=False,
                                 xref="paper", yref="paper",
-                                x=0.005, y=-0.002)],
+                                x=0.005, y=0.002)],
                             xaxis=dict(showgrid=False, zeroline=False, showticklabels=False),
                             yaxis=dict(showgrid=False, zeroline=False, showticklabels=False))
                         )
         fig.update_layout(
-            autosize=False,
-            width=1200,
-            height=600,
+            autosize=True,
             margin=dict(
                 l=0,
                 r=0,

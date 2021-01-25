@@ -36,7 +36,7 @@ binance_symbols = binance_info_json["symbols"]
 # persisting data to iris globals
 for symbol in binance_symbols:
     print(symbol)
-    obj_irisdomestic.set(json.dumps(symbol),"symbols", exchange_name, symbol["quoteAsset"], symbol["baseAsset"])
+    obj_irisdomestic.set(symbol["symbol"], exchange_name, symbol["quoteAsset"], symbol["baseAsset"])
 
 
 # index page
@@ -70,8 +70,8 @@ def get_criptocoins_market():
             dcc.Input(
                 id="txt_cryptocoin_market",
                 type="text",
-                placeholder="^symbols, binance",
-                value="^symbols, binance"
+                placeholder="^binance, BTC",
+                value="^binance, BTC"
             )]
         ),
         html.Div(
@@ -87,6 +87,14 @@ def update_cryptocoin_graph(global_text):
     obj_nx = nx.Graph()
     global_chart = obj_irisdomestic.view_global_chart(obj_nx=obj_nx, *global_array)
     fig = global_chart.get_fig()
+
+    def test(trace, points, selector):
+        fig.data[0].marker.color = "#cfcfcf"
+        fig.data[1].marker.color = "#cfcfcf"
+        return
+
+    fig.data[0].on_click(test)
+    fig.data[1].on_click(test)
     return fig
 
 # Update the index
@@ -95,10 +103,26 @@ def display_page(pathname, suppress_callback_exceptions=False):
     print(pathname)
     if pathname == '/cryptocoins-market':
         return get_criptocoins_market()
-    else:
-        return get_index_layout()
 
 
 if __name__ == '__main__':
-    app.layout = get_index_layout()
+    navbar = dbc.NavbarSimple(id="list_menu_content",
+                              children=[
+                                  dbc.NavItem(dbc.NavLink("CryptoCoin Markets", href="/cryptocoins-market")),
+                                  dbc.NavItem(dbc.NavLink("Vote in iris-multimodel-suite!",
+                                                          href="https://openexchange.intersystems.com/contest/current",
+                                                          target="_blank"))
+                              ],
+                              brand="IRIS Multimodel Suite - by Banzai",
+                              brand_href="/",
+                              color="dark",
+                              dark=True,
+                              )
+    app.layout = html.Div([
+        # html.H1(children='IRIS Multimodel Suite'),
+        dcc.Location(id='url', refresh=False),
+        html.Div(navbar),
+        html.Div(id='page-content')
+    ])
+    # represents the URL bar, doesn't render anything
     app.run_server(debug=True,host='0.0.0.0')
