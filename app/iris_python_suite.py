@@ -119,46 +119,80 @@ class irisglobalchart():
         else:
             self.hover_dict = {}
 
+        if "max_depth" in otherargs:
+            self.max_depth = otherargs["max_depth"]
+        else:
+            self.max_depth = -1
+
+        if "depth" in otherargs:
+            self.depth = otherargs["depth"]
+        else:
+            self.depth = 0
+
         self.global_array = global_array
         self.has_value = False
         self.subscripts = {}
         self.value = None
         self.isDefined = 0
+        self.is_leaf = True
         if "iris_connection" in otherargs:
             self.iris_connection = otherargs["iris_connection"]
             self.iris_native = irisnative.createIris(self.iris_connection)
             self.fill()
         return
 
+
+    def get_formatted_value(self):
+        value = self.iris_native.get(*self.global_array)
+        if self.is_leaf:
+            color = "#A6CB45"
+        else:
+            color = "#FEFCD7"
+        self.value = {
+            "node":",".join(self.global_array),
+            "value":value,
+            "is_leaf":self.is_leaf,
+            "color": color
+        }
+
+
     def fill(self):
         self.isDefined = self.iris_native.isDefined(*self.global_array)
         if self.isDefined == 0:
             return
 
-        self.value = self.iris_native.get(*self.global_array)
+
+        subscripts_iterator = self.iris_native.iterator(*self.global_array)
+
+        if self.max_depth > self.depth:
+            if not self.subscripts_filter:
+                for subscript_name, subscript_value in subscripts_iterator:
+                    self.is_leaf = False
+                    new_global_array = self.global_array + (subscript_name,)
+                    self.obj_nx.add_edge(self.global_array, new_global_array)
+                    irisglobalchart(*new_global_array,
+                                    iris_connection=self.iris_connection,
+                                    obj_nx=self.obj_nx,
+                                    hover_dict=self.hover_dict,
+                                    max_depth=self.max_depth,
+                                    depth=self.depth+1)
+            else:
+                for subscript_name in self.subscripts_filter:
+                    self.is_leaf = False
+                    new_global_array = self.global_array + (subscript_name,)
+                    self.obj_nx.add_edge(self.global_array, new_global_array)
+                    irisglobalchart(*new_global_array,
+                                    iris_connection=self.iris_connection,
+                                    obj_nx=self.obj_nx,
+                                    hover_dict=self.hover_dict,
+                                    max_depth=self.max_depth,
+                                    depth=self.depth+1)
+        self.get_formatted_value()
         self.hover_dict[self.global_array] = self.value
         if self.value:
             self.has_value = True
-        subscripts_iterator = self.iris_native.iterator(*self.global_array)
 
-        if not self.subscripts_filter:
-            for subscript_name, subscript_value in subscripts_iterator:
-                new_global_array = self.global_array + (subscript_name,)
-                self.obj_nx.add_edge(self.global_array, new_global_array)
-                irisglobalchart(*new_global_array,
-                                iris_connection=self.iris_connection,
-                                obj_nx=self.obj_nx,
-                                hover_dict=self.hover_dict)
-        else:
-            for subscript_name in self.subscripts_filter:
-                new_global_array = self.global_array + (subscript_name,)
-                self.obj_nx.add_edge(self.global_array, new_global_array)
-                irisglobalchart(*new_global_array,
-                                iris_connection=self.iris_connection,
-                                obj_nx=self.obj_nx,
-                                hover_dict=self.hover_dict)
         return
-
 
     def get_fig(self):
         _nx = self.obj_nx
@@ -214,29 +248,22 @@ class irisglobalchart():
             size = 5
             mode = 'markers'
 
-
-
-
         node_trace = go.Scatter(
             x=node_x, y=node_y,
             mode=mode,
             hoverinfo='text',
             marker=dict(size=size),
+            marker_color=node_y,
             text=node_text,
-            hovertext=node_hovertext
+            customdata=node_hovertext,
+            hovertext=node_text
         )
 
-
-        fig = go.Figure(data=[edge_trace, node_trace],
+        fig = go.FigureWidget(data=[edge_trace, node_trace],
                         layout=go.Layout(
-                            title='Global Graph View: ' + ",".join(self.global_array),
-                            titlefont_size=12,
+                            clickmode='event+select',
                             showlegend=False,
                             hovermode='closest',
-                            annotations=[dict(
-                                showarrow=False,
-                                xref="paper", yref="paper",
-                                x=0.005, y=0.002)],
                             xaxis=dict(showgrid=False, zeroline=False, showticklabels=False),
                             yaxis=dict(showgrid=False, zeroline=False, showticklabels=False))
                         )
