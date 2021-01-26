@@ -1,7 +1,7 @@
 # IRIS Multimodel Suite
 This is a set of modules with real world data using Intersystems IRIS Multimodel concepts.
 
-![picture](https://raw.githubusercontent.com/renatobanzai/iris-multimodel-suite/master/img/mkt_coins_graph.gif)
+![picture](https://raw.githubusercontent.com/renatobanzai/iris-multimodel-suite/master/img/mkt_coins_graph2.gif)
 
 ## Demo
 You can see it working at:
@@ -13,6 +13,8 @@ The crypto coins market isn't only BTC (Bitcoins), if we take a look at the bigg
   uses IRIS with 2 datamodels. 1st to ilustrate the link between market crypto coins and altcoins I am using the globals and the value
   stored is a json document like. Using this graph you can click at each symbol to trade using the binance home broker, but
   if you want, you can create your own home broker using all the features of python + Intersystems Iris.
+
+![picture](https://raw.githubusercontent.com/renatobanzai/iris-multimodel-suite/master/img/fish_science.gif)
 
 ## Fish Species Database Using Globals
 Ingesting data from fishbase we can store all relations between family, genus and species of fish. And by click or text we
