@@ -118,7 +118,8 @@ pass: SYS
 This is a python application using the IRIS service to persist and read data. I use globals to store raw data from JHU and plot it using Python community libraries. All code in ./app folder.
 Here some articles link to understant better the application: 
 - [iris-python-suite-hitchhikers-guide-global-1](https://community.intersystems.com/post/iris-python-suite-hitchhikers-guide-global-1)
-- [using-python-represent-g[https://openexchange.intersystems.com/contest/current]
+- [using-python-represent-globals-network-chart](https://community.intersystems.com/post/using-python-represent-globals-network-chart)
+
 
 ## If you enjoyed this application please vote in iris-multimodel-suite!
 [https://openexchange.intersystems.com/contest/current])(https://openexchange.intersystems.com/contest/current)
