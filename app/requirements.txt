@@ -68,6 +68,7 @@ testpath==0.4.4
 tornado==6.1
 traitlets==5.0.5
 urllib3==1.26.2
+visdcc==0.0.40
 wcwidth==0.2.5
 webencodings==0.5.1
 Werkzeug==1.0.1
