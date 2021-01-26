@@ -11,6 +11,7 @@ from dash.dependencies import Input, Output, State
 import networkx as nx
 import dash_bootstrap_components as dbc
 import csv
+import visdcc
 from plotly.callbacks import Points, InputDeviceState
 
 
@@ -93,13 +94,14 @@ def get_criptocoins_market():
             dcc.Input(
                 id="txt_cryptocoin_market",
                 type="text",
-                placeholder="^binance, BTC",
-                value="^binance, BTC"
+                placeholder="^binance",
+                value="^binance"
             )]
         ),
         html.Div(
             dcc.Graph(id="cryptocoin-market-graph")
-        )
+        ),
+        visdcc.Run_js(id="javascript")
     ])
 
 # grap view page
@@ -130,7 +132,8 @@ def get_science_fish():
 
 # populating the chart graph
 @app.callback(Output('cryptocoin-market-graph', 'figure'),
-              [Input('txt_cryptocoin_market', 'value')])
+              [Input('txt_cryptocoin_market', 'value')],
+              prevent_initial_call=True)
 def update_cryptocoin_graph(global_text):
     global_array = tuple([x.strip() for x in global_text.split(",")])
     obj_nx = nx.Graph()
@@ -138,52 +141,78 @@ def update_cryptocoin_graph(global_text):
     fig = global_chart.get_fig()
     return fig
 
-@app.callback(Output('txt_science_fish', 'value'),[Input('science-fish-graph', 'clickData')])
+@app.callback(Output('txt_science_fish', 'value'),[Input('science-fish-graph', 'clickData')],
+              prevent_initial_call=True)
 def onclick_fish(clickData):
     print("aaaaa")
     print(clickData)
-    if not clickData["points"][0]["customdata"]["is_leaf"]:
-        return clickData["points"][0]["customdata"]["node"]
+    if clickData:
+        if not clickData["points"][0]["customdata"]["is_leaf"] or not clickData["points"][0]["customdata"]["value"]:
+            return clickData["points"][0]["customdata"]["node"]
 
-@app.callback(Output('txt_cryptocoin_market', 'value'),[Input('cryptocoin-market-graph', 'clickData')])
-def onclick_crypto(clickData):
+@app.callback(Output('txt_cryptocoin_market', 'value'),Output('javascript', 'run'),[Input('cryptocoin-market-graph', 'clickData'), Input("txt_cryptocoin_market", "value")],
+              prevent_initial_call=True)
+def onclick_crypto(clickData, txt_val):
     print("aaaaa")
     print(clickData)
-    return clickData["points"][0]["customdata"]["node"]
+    js = ""
+    txt = txt_val
+    if clickData:
+        if clickData["points"][0]["customdata"]["value"]:
+            js = "window.open('https://www.binance.com/en/trade/"+ clickData["points"][0]["customdata"]["value"] +"')"
+            txt = txt_val
+        else:
+            txt = clickData["points"][0]["customdata"]["node"]
 
-@app.callback(Output('hover-text', 'children'), Output('hover-img', 'src'),[Input('science-fish-graph', 'hoverData')])
+    return txt , js
+
+@app.callback(Output('hover-text', 'children'), Output('hover-img', 'src'),[Input('science-fish-graph', 'hoverData')],
+              prevent_initial_call=True)
 def onhover_fish(clickData):
-    res = json.loads(clickData["points"][0]["customdata"]["value"])
-    if res["image"]==None:
-        image = "https://upload.wikimedia.org/wikipedia/commons/thumb/a/ac/No_image_available.svg/600px-No_image_available.svg.png"
-    else:
-        image = res["image"]
+    txt = ""
+    image = ""
+    if clickData and clickData["points"][0]["customdata"]["value"]:
+        res = json.loads(clickData["points"][0]["customdata"]["value"])
+        txt = res["text"]
+        if res["image"]==None:
+            image = "https://upload.wikimedia.org/wikipedia/commons/thumb/a/ac/No_image_available.svg/600px-No_image_available.svg.png"
+        else:
+            image = res["image"]
 
-    return res["text"], image
+    return txt, image
 
 @app.callback(Output('science-fish-graph', 'figure'),
-              [Input('txt_science_fish', 'value')])
+              [Input('txt_science_fish', 'value')],
+              prevent_initial_call=True)
 def update_science_fish_graph(global_text):
     global_array = tuple([x.strip() for x in global_text.split(",")])
     obj_nx = nx.Graph()
-    global_chart = obj_irisdomestic.view_global_chart(obj_nx=obj_nx, *global_array, max_depth=2)
+    depth = 1
+    if len(global_array) > 1:
+        depth = 2
+    global_chart = obj_irisdomestic.view_global_chart(obj_nx=obj_nx, *global_array, max_depth=depth)
     fig = global_chart.get_fig()
     return fig
 
 # Update the index
-@app.callback(dash.dependencies.Output('page-content', 'children'), [dash.dependencies.Input('url', 'pathname')])
+@app.callback(dash.dependencies.Output('page-content', 'children'), [dash.dependencies.Input('url', 'pathname')],
+              prevent_initial_call=True)
 def display_page(pathname, suppress_callback_exceptions=False):
     print(pathname)
     if pathname == '/cryptocoins-market':
         return get_criptocoins_market()
     if pathname == '/science-fish':
         return get_science_fish()
+    if pathname == '/full_ingestion':
+        ingest_binance_markets()
+        ingest_fishbase()
+        return get_science_fish()
 
 
 if __name__ == '__main__':
 
-    ingest_binance_markets()
-    ingest_fishbase()
+    # ingest_binance_markets()
+    # ingest_fishbase()
     navbar = dbc.NavbarSimple(id="list_menu_content",
                               children=[
                                   dbc.NavItem(dbc.NavLink("CryptoCoin Markets", href="/cryptocoins-market")),
