@@ -164,7 +164,7 @@ def onclick_crypto(clickData, txt_val):
         else:
             txt = clickData["points"][0]["customdata"]["node"]
 
-    return txt , js
+    return txt, js
 
 @app.callback(Output('hover-text', 'children'), Output('hover-img', 'src'),[Input('science-fish-graph', 'hoverData')],
               prevent_initial_call=True)
@@ -210,7 +210,6 @@ def display_page(pathname, suppress_callback_exceptions=False):
 
 
 if __name__ == '__main__':
-
     ingest_binance_markets()
     ingest_fishbase()
     navbar = dbc.NavbarSimple(id="list_menu_content",
