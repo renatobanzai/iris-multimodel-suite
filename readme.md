@@ -1,7 +1,6 @@
 # IRIS Multimodel Suite
 This is a set of modules with real world data using Intersystems IRIS Multimodel concepts.
 
-
 ![picture](https://raw.githubusercontent.com/renatobanzai/iris-multimodel-suite/master/img/mkt_coins_graph.gif)
 
 ## Demo
@@ -11,8 +10,14 @@ You can see it working at:
 ## Crypto Coins Market Graph
 The crypto coins market isn't only BTC (Bitcoins), if we take a look at the biggest Crypto Coin Exchange (Binance) we can
  see plenty ways to trade crypto coins. And how IRIS Multimodel Pattern can help us to do it? In this particular case this application
-  uses IRIS with 2 datamodels. 1st to ilustrate the link between market crypto coins and altcoins I am using the globals
+  uses IRIS with 2 datamodels. 1st to ilustrate the link between market crypto coins and altcoins I am using the globals and the value
+  stored is a json document like. Using this graph you can click at each symbol to trade using the binance home broker, but
+  if you want, you can create your own home broker using all the features of python + Intersystems Iris.
 
+## Fish Species Database Using Globals
+Ingesting data from fishbase we can store all relations between family, genus and species of fish. And by click or text we
+can query to see what we want + the fish picture. This is an interactive graph which can make easier the learning path of each specie.
+And depending on which data is ingested, is simple to render this graph.
 
 ## Multimodel?
 Almost market developers used to use one technology for each data model concept. With Intersystems Iris you can do it with
@@ -111,5 +116,7 @@ pass: SYS
 This is a python application using the IRIS service to persist and read data. I use globals to store raw data from JHU and plot it using Python community libraries. All code in ./app folder.
 Here some articles link to understant better the application: 
 - [iris-python-suite-hitchhikers-guide-global-1](https://community.intersystems.com/post/iris-python-suite-hitchhikers-guide-global-1)
-- [using-python-represent-globals-network-chart](https://community.intersystems.com/post/using-python-represent-globals-network-chart)
+- [using-python-represent-g[https://openexchange.intersystems.com/contest/current]
 
+## If you enjoyed this application please vote in iris-multimodel-suite!
+[https://openexchange.intersystems.com/contest/current])(https://openexchange.intersystems.com/contest/current)
