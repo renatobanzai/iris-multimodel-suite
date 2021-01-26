@@ -211,8 +211,8 @@ def display_page(pathname, suppress_callback_exceptions=False):
 
 if __name__ == '__main__':
 
-    # ingest_binance_markets()
-    # ingest_fishbase()
+    ingest_binance_markets()
+    ingest_fishbase()
     navbar = dbc.NavbarSimple(id="list_menu_content",
                               children=[
                                   dbc.NavItem(dbc.NavLink("CryptoCoin Markets", href="/cryptocoins-market")),
