@@ -138,8 +138,9 @@ def get_fishfamily():
 ```
 
 ### My own model
-I have used on science fish a document based model to store on globals more than on text. So inside there is a dictionary with
-values that helps me to make the graph richer (with url image, global adress, and other data). This can be observed on methods:
+I have used on science fish a combination of document and graph model database to store on globals more than on text.
+So inside the ^fish there is a dictionary with values that helps me to make the chart richer and more interactive (with url image, global adress,
+ and other data). This can be observed on methods:
 
 ```python
 # __main__.py
