@@ -121,33 +121,33 @@ Cryptocoins Market are based on globals key-values, if you take a look at namesp
 I use the subscripts to connect the cryptocoins pointing which one can be traded by the other. To render I use a python module
 created by me: irisdomestic.py. You can see the code at \__main__.py
 
-''' python
+```python
 # ingestion methods
 def ingest_binance_markets():
 
 # reading global methods
 def update_cryptocoin_graph(global_text):
-'''
+```
 
 ### SQL
 As fish families are not available by API, I use JDBC on python to query a table to get all families from the table fish.family
 in: \__main__.py
 
-''' python
+```python
 def get_fishfamily():
-'''
+```
 
 ### My own model
 I have used on science fish a document based model to store on globals more than on text. So inside there is a dictionary with
 values that helps me to make the graph richer (with url image, global adress, and other data). This can be observed on methods:
 
-''' python
+```python
 # __main__.py
 def update_science_fish_graph(global_text):
 
 # iris_python_suite.py / irisdomestic class
 def fill(self):
-'''
+```
 
 ## How does it work?
 This is a python application using the IRIS service to persist and read data. I use globals to store raw data from JHU and plot it using Python community libraries. All code in ./app folder.
