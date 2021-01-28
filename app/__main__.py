@@ -13,7 +13,7 @@ import dash_bootstrap_components as dbc
 import csv
 import visdcc
 from plotly.callbacks import Points, InputDeviceState
-
+import jaydebeapi
 
 # todo: demonstrate a profile of different aproachs in code
 try:
@@ -41,15 +41,27 @@ def ingest_binance_markets():
         # print(symbol)
         obj_irisdomestic.set(symbol["symbol"], exchange_name, symbol["quoteAsset"], symbol["baseAsset"])
 
+def get_fishfamily():
+    jdbc_server = "jdbc:IRIS://"+ config["iris"]["host"] +":"+ str(config["iris"]["port"]) + "/" + config["iris"]["namespace"]
+    jdbc_driver = 'com.intersystems.jdbc.IRISDriver'
+    iris_jdbc_jar = "./intersystems-jdbc-3.1.0.jar"
+    iris_user = config["iris"]["username"]
+    iris_password = config["iris"]["password"]
+
+    conn = jaydebeapi.connect(jdbc_driver, jdbc_server, [iris_user, iris_password], iris_jdbc_jar)
+    curs = conn.cursor()
+    curs.execute("SELECT family_id, family_name FROM fish.family")
+
+    total_cache = curs.fetchall()
+
+    result = {}
+    for row in total_cache:
+        result[str(row[0])] = row[1]
+    return result
+
 def ingest_fishbase():
     print("ingest_fishbase")
-
-    dic_family = {}
-
-    with open('../data/fishbase_family.csv', newline='', encoding='utf-8') as f:
-        reader = csv.reader(f)
-        for row in reader:
-            dic_family[row[0]] = row[1]
+    dic_family = get_fishfamily()
 
     offset = 0
     limit = 3500
@@ -124,7 +136,7 @@ def get_science_fish():
         html.Div([
             html.Label(id="hover-text",
                        style={'float': 'left'}),
-            html.Img(id='hover-img',
+            html.Div(id='div-img',
                      style={'float': 'left', 'max-width':'280px'})
         ])
     ])
@@ -166,7 +178,7 @@ def onclick_crypto(clickData, txt_val):
 
     return txt, js
 
-@app.callback(Output('hover-text', 'children'), Output('hover-img', 'src'),[Input('science-fish-graph', 'hoverData')],
+@app.callback(Output('hover-text', 'children'), Output('div-img', 'children'),[Input('science-fish-graph', 'hoverData')],
               prevent_initial_call=True)
 def onhover_fish(clickData):
     txt = ""
@@ -179,7 +191,14 @@ def onhover_fish(clickData):
         else:
             image = res["image"]
 
-    return txt, image
+        image = image.replace(".de", ".us")
+
+    img = html.Img(
+        id="img_"+txt,
+        src=image,
+        style={'float': 'left', 'max-width': '280px'}
+    )
+    return txt, img
 
 @app.callback(Output('science-fish-graph', 'figure'),
               [Input('txt_science_fish', 'value')],
@@ -232,4 +251,4 @@ if __name__ == '__main__':
         html.Div(id='page-content')
     ])
     # represents the URL bar, doesn't render anything
-    app.run_server(debug=True,host='0.0.0.0')
+    app.run_server(debug=False,host='0.0.0.0')

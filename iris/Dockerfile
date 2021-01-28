@@ -10,6 +10,7 @@ RUN chmod +x /irissession.sh
 
 USER ${ISC_PACKAGE_MGRUSER}
 
+COPY  *.csv ./
 COPY  Installer.cls .
 SHELL ["/irissession.sh"]
 

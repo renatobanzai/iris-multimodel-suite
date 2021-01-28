@@ -4,17 +4,8 @@ Class App.Installer
 XData setup
 {
 <Manifest>
-  <Default Name="SourceDir" Value="#{$system.Process.CurrentDirectory()}src"/>
-
-  <Namespace Name="IRISAPP" Code="IRISAPP" Data="IRISAPP" Create="yes" Ensemble="no">
-
-    <Configuration>
-      <Database Name="IRISAPP" Dir="/opt/irisapp/data" Create="yes"/>
-
-      <Import File="${SourceDir}" Flags="ck" Recurse="1"/>
-    </Configuration>
-  </Namespace>
-
+  <Default Name="NewDataDir" Value="#{$system.Process.CurrentDirectory()}"/>
+  <RunInstall Class="App.Installer" Method="IngestData"/>
 </Manifest>
 }
 
@@ -22,6 +13,17 @@ ClassMethod setup(ByRef pVars, pLogLevel As %Integer = 3, pInstaller As %Install
 {
   #; Let XGL document generate code for this method. 
   Quit ##class(%Installer.Manifest).%Generate(%compiledclass, %code, "setup")
+}
+
+ClassMethod IngestData(pVars, pLogLevel, tInstaller) As %Status
+{
+  W "Ingesting Data"
+  Zn "USER"
+  zpm "install csvgen"
+  Set ffamily = tInstaller.Evaluate("${NewDataDir}") _ "fishbase_family.csv"
+  Set pclassfamily = "fish.family"
+  Set tSC = ##class(community.csvgen).Generate(ffamily,,.pclassfamily)
+   Quit tSC
 }
 
 }
