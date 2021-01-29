@@ -14,6 +14,8 @@ import csv
 import visdcc
 from plotly.callbacks import Points, InputDeviceState
 import jaydebeapi
+import datetime
+import plotly.graph_objects as go
 
 # todo: demonstrate a profile of different aproachs in code
 try:
@@ -27,6 +29,15 @@ app = dash.Dash(__name__, external_stylesheets=[dbc.themes.BOOTSTRAP], suppress_
 
 # Class with IRIS Persistence
 obj_irisdomestic = irisdomestic(config["iris"])
+print("")
+
+def save_page_visit(page_name):
+    obj_irisdomestic.iris_native.classMethodValue("banzai.visit",
+                                                  "SaveVisit",
+                                                  request.remote_addr,
+                                                  page_name,
+                                                  datetime.datetime.now().timestamp()
+                                                  )
 
 def ingest_binance_markets():
     # getting binance market data
@@ -58,6 +69,35 @@ def get_fishfamily():
     for row in total_cache:
         result[str(row[0])] = row[1]
     return result
+
+def get_visit_log_figure():
+    jdbc_server = "jdbc:IRIS://"+ config["iris"]["host"] +":"+ str(config["iris"]["port"]) + "/" + config["iris"]["namespace"]
+    jdbc_driver = 'com.intersystems.jdbc.IRISDriver'
+    iris_jdbc_jar = "./intersystems-jdbc-3.1.0.jar"
+    iris_user = config["iris"]["username"]
+    iris_password = config["iris"]["password"]
+
+    conn = jaydebeapi.connect(jdbc_driver, jdbc_server, [iris_user, iris_password], iris_jdbc_jar)
+    curs = conn.cursor()
+    curs.execute("SELECT ID, VisitorIP, VisitorPage, VisitorTimeStamp FROM banzai.visit")
+
+    total_cache = curs.fetchall()
+
+    col_visitor_ip = []
+    col_visitor_page = []
+    col_visitor_timestamp = []
+    for row in total_cache:
+        col_visitor_ip.append(row[1])
+        col_visitor_page.append(row[2])
+        col_visitor_timestamp.append(row[3])
+
+    data = [col_visitor_timestamp, col_visitor_ip, col_visitor_page]
+
+    fig = go.Figure(data=[go.Table(header=dict(values=['Timestamp', 'IP', 'Page']),
+                                   cells=dict(values=data))
+                          ])
+
+    return fig
 
 def ingest_fishbase():
     print("ingest_fishbase")
@@ -96,6 +136,19 @@ def get_index_layout():
                 html.Div(id='page-content')
                 ])
                 # represents the URL bar, doesn't render anything
+
+# grap view page
+def get_visit_log():
+    return html.Div(children=[
+        html.Div([
+            html.Br(),
+            html.Div(
+                dcc.Graph(id="visit-log",
+                          figure=get_visit_log_figure())
+            )]
+        )
+    ])
+
 
 # grap view page
 def get_criptocoins_market():
@@ -218,10 +271,13 @@ def update_science_fish_graph(global_text):
               prevent_initial_call=True)
 def display_page(pathname, suppress_callback_exceptions=False):
     print(pathname)
+    save_page_visit(pathname)
     if pathname == '/cryptocoins-market':
         return get_criptocoins_market()
     if pathname == '/science-fish':
         return get_science_fish()
+    if pathname == '/visit-log':
+        return get_visit_log()
     if pathname == '/full_ingestion':
         ingest_binance_markets()
         ingest_fishbase()
@@ -235,6 +291,7 @@ if __name__ == '__main__':
                               children=[
                                   dbc.NavItem(dbc.NavLink("CryptoCoin Markets", href="/cryptocoins-market")),
                                   dbc.NavItem(dbc.NavLink("Science Fish", href="/science-fish")),
+                                  dbc.NavItem(dbc.NavLink("Visit Log", href="/visit-log")),
                                   dbc.NavItem(dbc.NavLink("Vote in iris-multimodel-suite!",
                                                           href="https://openexchange.intersystems.com/contest/current",
                                                           target="_blank"))

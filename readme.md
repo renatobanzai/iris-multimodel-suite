@@ -137,9 +137,24 @@ in: \__main__.py
 def get_fishfamily():
 ```
 
+### Object
+To record all visitors data I decided to use the object data model. Create the class on intersystems IRIS file:
+./iris/src/banzai/visit.cls . The result can be viewed at the page /visit-log. I persists the data using the IRIS Native API at \__main__.py:
+
+```python
+# persising data
+def save_page_visit(page_name):
+    obj_irisdomestic.iris_native.classMethodValue("banzai.visit",
+                                                  "SaveVisit",
+                                                  request.remote_addr,
+                                                  page_name,
+                                                  datetime.datetime.now().timestamp()
+                                                  )
+```
+
 ### My own model
 I have used on science fish a combination of document and graph model database to store on globals more than on text.
-So inside the ^fish there is a dictionary with values that helps me to make the chart richer and more interactive (with url image, global adress,
+So inside the ^fish there is a dictionary with values that helps me to make the chart richer and more interactive (with url image, global address,
  and other data). This can be observed on methods:
 
 ```python

@@ -4,7 +4,11 @@ Class App.Installer
 XData setup
 {
 <Manifest>
+  <Default Name="SourceDir" Value="#{$system.Process.CurrentDirectory()}src"/>
   <Default Name="NewDataDir" Value="#{$system.Process.CurrentDirectory()}"/>
+  <Namespace Name="USER" Code="USER" Data="USER" Create="no" Ensemble="0">
+    <Import File="${SourceDir}" Flags="ck" Recurse="1"/>
+  </Namespace>
   <RunInstall Class="App.Installer" Method="IngestData"/>
 </Manifest>
 }
@@ -23,7 +27,8 @@ ClassMethod IngestData(pVars, pLogLevel, tInstaller) As %Status
   Set ffamily = tInstaller.Evaluate("${NewDataDir}") _ "fishbase_family.csv"
   Set pclassfamily = "fish.family"
   Set tSC = ##class(community.csvgen).Generate(ffamily,,.pclassfamily)
-   Quit tSC
+
+  Quit tSC
 }
 
 }
