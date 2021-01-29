@@ -173,4 +173,4 @@ Here some articles link to understant better the application:
 
 
 ## If you enjoyed this application please vote in iris-multimodel-suite!
-[https://openexchange.intersystems.com/contest/current])(https://openexchange.intersystems.com/contest/current)
+[https://openexchange.intersystems.com/contest/current](https://openexchange.intersystems.com/contest/current)
