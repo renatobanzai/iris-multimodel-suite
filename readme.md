@@ -21,6 +21,20 @@ Ingesting data from fishbase we can store all relations between family, genus an
 can query to see what we want + the fish picture. This is an interactive graph which can make easier the learning path of each specie.
 And depending on which data is ingested, is simple to render this graph.
 
+[http://iris-multimodel-suite.eastus.cloudapp.azure.com/blog-post](http://iris-multimodel-suite.eastus.cloudapp.azure.com/blog-post)
+## Blog Post in a key-value database model
+My engine works in a way that I cant imagine more simple than that. To persist each post I create a global "^blog", with the
+subscript "post", and the next subscript is the post Id. In this global I put the content of the post and finish! Just this,
+nothing of create table, index, etc... using the values persisted I render the markdown into html and show on page.
+
+```
+^blog("post", "1") = "# post 1 content..."
+^blog("post", "2") = "# post 2..."
+^blog("post", "3") = "# post 3 markdown content..."
+```
+You can see the demo here:
+![picture](https://raw.githubusercontent.com/renatobanzai/iris-multimodel-suite/master/img/blog.gif)
+
 ## Multimodel?
 Almost market developers used to use one technology for each data model concept. With Intersystems Iris you can do it with
 the same systems. In a short time we can storage a graph data structured into Iris Globals, a document and a common SQL model.

@@ -194,7 +194,63 @@ def get_science_fish():
         ])
     ])
 
+def make_item(i, val):
+    # we use this function to make the example items to avoid code duplication
+    return dbc.Card(
+                dbc.CardBody(dcc.Markdown(val))
+    )
 
+
+def get_all_posts():
+    all_posts = obj_irisdomestic.iterator("blog", "post")
+    list_items =[]
+    for post in all_posts:
+        # list_items.append(html.Div(dcc.Markdown(post[1])))
+        list_items.append(make_item(post[0], post[1]))
+    list_items.reverse()
+    return list_items
+
+def get_blog_post_layout():
+    post_input = dbc.FormGroup(
+        [
+            dbc.Label("Markdown Blog Post", html_for="txt_blog_post"),
+            dbc.Textarea(id="txt_blog_post", placeholder="Enter a markdown format text", rows=10),
+            dbc.Button("Save", id="btn_save", className="mr-2"),
+        ]
+    )
+
+    result = html.Div(children=[
+        html.Div([
+            html.Br(),
+            post_input]
+        ),
+        html.Div(children=get_all_posts(),
+                 id="div_accordion",
+                 className="accordion"
+                 )
+    ])
+
+    return result
+
+# saving the post
+@app.callback(
+    Output("txt_blog_post", "value"),
+    Output("btn_save", "n_clicks"),
+    Output("div_accordion", "children"),
+    [Input("btn_save", "n_clicks"),Input("txt_blog_post", "value")]
+)
+def on_btn_save_click(n, val):
+    post_id = -1
+    if n is None:
+        raise dash.exceptions.PreventUpdate
+    else:
+        list_post = obj_irisdomestic.iterator("blog", "post")
+        for post in list_post:
+            post_id = int(post[0])
+
+    post_id += 1
+    obj_irisdomestic.set(val, "blog", "post", str(post_id))
+    return "", None, get_all_posts()
 # populating the chart graph
 @app.callback(Output('cryptocoin-market-graph', 'figure'),
               [Input('txt_cryptocoin_market', 'value')],
@@ -276,6 +332,8 @@ def display_page(pathname, suppress_callback_exceptions=False):
         return get_criptocoins_market()
     if pathname == '/science-fish':
         return get_science_fish()
+    if pathname == '/blog-post':
+        return get_blog_post_layout()
     if pathname == '/visit-log':
         return get_visit_log()
     if pathname == '/full_ingestion':
@@ -291,6 +349,7 @@ if __name__ == '__main__':
                               children=[
                                   dbc.NavItem(dbc.NavLink("CryptoCoin Markets", href="/cryptocoins-market")),
                                   dbc.NavItem(dbc.NavLink("Science Fish", href="/science-fish")),
+                                  dbc.NavItem(dbc.NavLink("Blog Post", href="/blog-post")),
                                   dbc.NavItem(dbc.NavLink("Visit Log", href="/visit-log")),
                                   dbc.NavItem(dbc.NavLink("Vote in iris-multimodel-suite!",
                                                           href="https://openexchange.intersystems.com/contest/current",
@@ -308,4 +367,4 @@ if __name__ == '__main__':
         html.Div(id='page-content')
     ])
     # represents the URL bar, doesn't render anything
-    app.run_server(debug=False,host='0.0.0.0')
+    app.run_server(debug=True,host='0.0.0.0')
