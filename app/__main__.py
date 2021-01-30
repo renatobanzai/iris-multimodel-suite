@@ -367,4 +367,4 @@ if __name__ == '__main__':
         html.Div(id='page-content')
     ])
     # represents the URL bar, doesn't render anything
-    app.run_server(debug=True,host='0.0.0.0')
+    app.run_server(debug=False,host='0.0.0.0')
