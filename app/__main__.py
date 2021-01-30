@@ -16,6 +16,7 @@ from plotly.callbacks import Points, InputDeviceState
 import jaydebeapi
 import datetime
 import plotly.graph_objects as go
+import sys
 
 # todo: demonstrate a profile of different aproachs in code
 try:
@@ -40,17 +41,20 @@ def save_page_visit(page_name):
                                                   )
 
 def ingest_binance_markets():
-    # getting binance market data
-    print("ingest_binance_markets")
-    exchange_name="binance"
-    binance_info_request = requests.get("https://www.binance.com/api/v3/exchangeInfo")
-    binance_info_json = binance_info_request.json()
-    binance_symbols = binance_info_json["symbols"]
+    try:
+        # getting binance market data
+        print("ingest_binance_markets")
+        exchange_name="binance"
+        binance_info_request = requests.get("https://www.binance.com/api/v3/exchangeInfo", timeout=10)
+        binance_info_json = binance_info_request.json()
+        binance_symbols = binance_info_json["symbols"]
 
-    # persisting data to iris globals
-    for symbol in binance_symbols:
-        # print(symbol)
-        obj_irisdomestic.set(symbol["symbol"], exchange_name, symbol["quoteAsset"], symbol["baseAsset"])
+        # persisting data to iris globals
+        for symbol in binance_symbols:
+            # print(symbol)
+            obj_irisdomestic.set(symbol["symbol"], exchange_name, symbol["quoteAsset"], symbol["baseAsset"])
+    except:
+        print(sys.exc_info())
 
 def get_fishfamily():
     jdbc_server = "jdbc:IRIS://"+ config["iris"]["host"] +":"+ str(config["iris"]["port"]) + "/" + config["iris"]["namespace"]
@@ -107,11 +111,14 @@ def ingest_fishbase():
     limit = 3500
 
     for i in range(10):
-        fishbase_request = requests.get("https://fishbase.ropensci.org/species?limit="+str(limit)+"&offset="+str(offset)+"")
-        fishbase_json = fishbase_request.json()
-        for spec in fishbase_json["data"]:
-            obj_irisdomestic.set(json.dumps({"text":spec["Genus"] + " " +spec["Species"],"image":spec["image"]}),
-                                 "fish", dic_family[str(spec["FamCode"])], spec["Genus"], spec["Species"])
+        try:
+            fishbase_request = requests.get("https://fishbase.ropensci.org/species?limit="+str(limit)+"&offset="+str(offset)+"", timeout=10)
+            fishbase_json = fishbase_request.json()
+            for spec in fishbase_json["data"]:
+                obj_irisdomestic.set(json.dumps({"text":spec["Genus"] + " " +spec["Species"],"image":spec["image"]}),
+                                     "fish", dic_family[str(spec["FamCode"])], spec["Genus"], spec["Species"])
+        except:
+            print(sys.exc_info())
 
         offset+=limit
 
